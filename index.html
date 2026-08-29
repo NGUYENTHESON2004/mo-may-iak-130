@@ -5,64 +5,46 @@
 <meta name="authoring-tool" content="Adobe_Animate_CC">
 <title>Phần mềm mô phỏng quy trình mở máy kiểm tra tham số trên máy bay Iak-130</title>
 
-<!-- TỐI ƯU HÓA HIỂN THỊ ĐIỆN THOẠI -->
- <!-- Dành cho các dòng máy Apple (iPhone, iPad) -->
+<!-- TỐI ƯU HÓA HIỂN THỊ ĐIỆN THOẠI & PWA -->
 <link rel="apple-touch-icon" href="images/app_logo.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mở máy Iak-130">
-
-<!-- Link tới file cấu hình cho máy Android -->
 <link rel="manifest" href="manifest.json?v=2">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-
-<!-- Khóa Zoom tuyệt đối trên mọi thiết bị di động -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover" />
 
 <style>
-  /* Chặn bôi đen văn bản và menu popup của trình duyệt */
+  /* Nền ngoài cùng là MÀU ĐEN (để che các khoảng trống viền màn hình di động) */
   html, body {
     margin: 0;
     padding: 0;
-    width: 100vw;  /* Dùng vw/vh thay vì % để khóa chặt khung nhìn trên mobile */
+    width: 100vw;
     height: 100vh;
-    background-color: #FFFFFF; /* Nền đen để chìm viền 2 bên khi xoay ngang */
+    background-color: #000000; 
     overflow: hidden;
     touch-action: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
   }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #FFFFFF; /* Nền ngoài cùng là màu ĐEN (che các viền thừa) */
-    overflow: hidden;
-  }
-
-  /* Khung chứa tự động căn giữa */
+  /* Khung chứa tự động căn giữa - Nền TRẮNG */
   #animation_container {
     position: absolute; 
     margin: auto; 
     left: 0; right: 0; top: 0; bottom: 0;
-    background-color: rgba(255, 255, 255, 1.00); /* Nền khung chứa là TRẮNG */
+    background-color: #FFFFFF;
   }
   
+  /* Vùng vẽ Canvas bên trong - Nền TRẮNG */
   canvas {
     display: block;
     touch-action: none;
-    background-color: rgba(255, 255, 255, 1.00); /* Giao diện bên trong canvas là TRẮNG */
+    background-color: #FFFFFF;
     -webkit-tap-highlight-color: transparent;
     outline: none;
   }
 
-  
   /* ========================================= */
   /* HIỆU ỨNG MÀN HÌNH LOADING CHUYÊN NGHIỆP   */
   /* ========================================= */
@@ -95,7 +77,7 @@
       transition: width 0.1s linear; 
   }
 
-  /* LỚP PHỦ YÊU CẦU CHẠM (Ẩn đi lúc đầu, chỉ hiện khi load 100%) */
+  /* LỚP PHỦ YÊU CẦU CHẠM */
   #fullscreen-overlay {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background-color: rgba(0, 0, 0, 0.9); color: white;
@@ -117,12 +99,12 @@
 <!-- BỘ BIẾN CẤU HÌNH TOÀN CỤC CHO HỆ THỐNG (API & USER)     -->
 <!-- ======================================================= -->
 <script>
-    window.serverURL = "http://localhost:5000"; // Đổi thành IP Máy chủ của bạn
-    window.currentUserID = 1;                   // ID mặc định của học viên
+    window.serverURL = "http://localhost:5000"; 
+    window.currentUserID = 1;                   
     window.ScenarioData = {
-        rawData: "",                            // Data Excel
-        rawErrors: "",                          // Kịch bản hỏng hóc
-        lessonNames: {}                         // Tên bài tập
+        rawData: "",                            
+        rawErrors: "",                          
+        lessonNames: {}                         
     };
 </script>
 
@@ -138,7 +120,6 @@ function init() {
     var loader = new createjs.LoadQueue(false);
     loader.installPlugin(createjs.Sound);
     
-    // BẮT SỰ KIỆN ĐANG TẢI DỮ LIỆU (%) ĐỂ HIỂN THỊ LÊN THANH PROGRESS
     loader.addEventListener("progress", function(evt) {
         var percent = Math.round(evt.loaded * 100);
         document.getElementById("load-percent").innerText = "ĐANG TẢI DỮ LIỆU... " + percent + "%";
@@ -164,35 +145,29 @@ function handleComplete(evt,comp) {
     }
     exportRoot = new lib.PhanMemMoMayIak130_HTML5Canvas();
     stage = new lib.Stage(canvas);
-    stage.enableMouseOver(20); // Quét chuột 20Hz cho mượt
+    stage.enableMouseOver(20); 
     
-    // BẬT CẢM ỨNG (Tối ưu chặn cuộn trang)
     if(createjs.Touch.isSupported()) {
         createjs.Touch.enable(stage, true, false); 
     }
 
     fnStartAnimation = function() {
         stage.addChild(exportRoot);
-        
-        // KÍCH HOẠT GPU RENDER (Cực kỳ quan trọng để chống giật trên Mobile)
         createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED; 
         createjs.Ticker.framerate = lib.properties.fps;
-        
         createjs.Ticker.addEventListener("tick", stage);
     }       
     
-    // Resize theo cấu hình gốc của Animate
     AdobeAn.makeResponsive(true,'both',false,1,[canvas,anim_container,dom_overlay_container]);  
     AdobeAn.compositionLoaded(lib.properties.id);
     fnStartAnimation();
     
-    // XỬ LÝ KHI TẢI XONG 100%: Ẩn Loading, Hiện nút "Chạm để bắt đầu"
     setTimeout(function() {
         var loadScreen = document.getElementById("loading-screen");
-        loadScreen.style.opacity = "0"; // Mờ dần
+        loadScreen.style.opacity = "0"; 
         setTimeout(function() {
-            loadScreen.style.display = "none"; // Ẩn hẳn
-            document.getElementById("fullscreen-overlay").style.display = "flex"; // Hiện nút Start
+            loadScreen.style.display = "none"; 
+            document.getElementById("fullscreen-overlay").style.display = "flex"; 
         }, 400); 
     }, 200);
 }
@@ -203,7 +178,7 @@ function playSound(id, loop, offset) {
 </head>
 <body onload="init();">
 
-    <!-- MÀN HÌNH LOADING CHUYÊN NGHIỆP -->
+    <!-- MÀN HÌNH LOADING -->
     <div id="loading-screen">
         <div class="loader-ring"></div>
         <div id="load-percent" class="loader-text">ĐANG TẢI DỮ LIỆU... 0%</div>
@@ -212,31 +187,24 @@ function playSound(id, loop, offset) {
         </div>
     </div>
 
-    <!-- LỚP PHỦ YÊU CẦU CHẠM ĐỂ BẮT ĐẦU -->
+    <!-- LỚP PHỦ YÊU CẦU CHẠM -->
     <div id="fullscreen-overlay">
         <h2>Vui lòng xoay ngang thiết bị</h2>
         <button id="start-btn">CHẠM ĐỂ BẮT ĐẦU</button>
     </div>
 
-    <!-- Khung chứa giao diện phần mềm (Nền đen đồng bộ) -->
-    <div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00);; width:1420px; height:720px">
-        <canvas id="canvas" width="1420" height="720" style="position: absolute; display: block; background-color:rgba(0, 0, 0, 1.00);"></canvas>
+    <!-- Khung chứa giao diện phần mềm (Đã chỉnh lại nền trắng) -->
+    <div id="animation_container" style="background-color:#FFFFFF; width:1420px; height:720px">
+        <canvas id="canvas" width="1420" height="720" style="position: absolute; display: block; background-color:#FFFFFF;"></canvas>
         <div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1420px; height:720px; position: absolute; left: 0px; top: 0px; display: block;">
         </div>
     </div>
 
-    <!-- SCRIPT XỬ LÝ BẢO VỆ GIAO DIỆN, MỞ KHÓA ÂM THANH & PWA -->
     <script>
-        // ========================================================
-        // BỘ KHIÊN BẢO VỆ GIAO DIỆN (CHỐNG ZOOM & CLICK PHẢI)
-        // ========================================================
-        
-        // 1. Chặn Zoom 2 ngón tay (Pinch-to-zoom) trên iOS/Safari
         document.addEventListener('touchmove', function (event) {
             if (event.scale !== 1) { event.preventDefault(); }
         }, { passive: false });
 
-        // 2. Chặn Zoom khi chạm đúp (Double-tap to zoom)
         var lastTouchEnd = 0;
         document.addEventListener('touchend', function (event) {
             var now = (new Date()).getTime();
@@ -244,14 +212,10 @@ function playSound(id, loop, offset) {
             lastTouchEnd = now;
         }, { passive: false });
 
-        // 3. Chặn Click chuột phải (Context Menu)
         document.addEventListener('contextmenu', function(event) {
             event.preventDefault();
         });
 
-        // ========================================================
-        // XỬ LÝ KHỞI ĐỘNG HỆ THỐNG & FULLSCREEN
-        // ========================================================
         var overlay = document.getElementById('fullscreen-overlay');
         var startBtn = document.getElementById('start-btn');
         
@@ -259,27 +223,24 @@ function playSound(id, loop, offset) {
             e.preventDefault(); 
             var docElm = document.documentElement;
             
-            // 1. Kích hoạt Fullscreen (Đã thêm đủ tiền tố cho mọi trình duyệt Webkit/Moz)
             try {
                 if (docElm.requestFullscreen) {
                     docElm.requestFullscreen();
-                } else if (docElm.webkitRequestFullscreen) { /* Safari & iOS */
+                } else if (docElm.webkitRequestFullscreen) { 
                     docElm.webkitRequestFullscreen();
-                } else if (docElm.mozRequestFullScreen) { /* Firefox */
+                } else if (docElm.mozRequestFullScreen) { 
                     docElm.mozRequestFullScreen();
-                } else if (docElm.msRequestFullscreen) { /* Edge */
+                } else if (docElm.msRequestFullscreen) { 
                     docElm.msRequestFullscreen();
                 }
             } catch(err) {}
             
-            // 2. Khóa xoay màn hình ngang
             try {
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(function(err) {});
                 }
             } catch(err) {}
 
-            // 3. CHIẾN THUẬT "SILENT LOOP" (Bẻ khóa âm thanh)
             try {
                 var AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (AudioContext) {
@@ -291,39 +252,26 @@ function playSound(id, loop, offset) {
 
                     var oscillator = ctx.createOscillator();
                     var gainNode = ctx.createGain();
-                    
-                    gainNode.gain.value = 0; // Ép âm lượng về 0 
-                    
+                    gainNode.gain.value = 0; 
                     oscillator.connect(gainNode);
                     gainNode.connect(ctx.destination);
                     oscillator.start(0);
 
-                    // Đánh thức âm thanh mỗi khi chạm
                     document.addEventListener('touchstart', function() {
                         if (ctx.state === 'suspended') ctx.resume();
                     }, {passive: true});
                 }
-            } catch(err) {
-                console.warn("Lỗi bẻ khóa âm thanh: ", err);
-            }
+            } catch(err) {}
             
-            // 4. Ẩn màn hình chờ
             overlay.style.display = 'none';
         }
 
         startBtn.addEventListener('touchstart', batDauHoc, {passive: false});
         startBtn.addEventListener('click', batDauHoc);
 
-        // ========================================================
-        // ĐĂNG KÝ SERVICE WORKER (BẮT BUỘC ĐỂ HIỆN NÚT CÀI ĐẶT APP)
-        // ========================================================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js?v=2').then(function(registration) {
-                    console.log('PWA ServiceWorker đăng ký thành công');
-                }).catch(function(err) {
-                    console.log('Lỗi đăng ký ServiceWorker: ', err);
-                });
+                navigator.serviceWorker.register('sw.js?v=2').catch(function(err) {});
             });
         }
     </script>

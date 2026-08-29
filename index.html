@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-title" content="Mở máy Iak-130">
 
 <!-- Link tới file cấu hình cho máy Android -->
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json?v=2">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 
 <!-- Khóa Zoom tuyệt đối trên mọi thiết bị di động -->
@@ -309,7 +309,7 @@ function playSound(id, loop, offset) {
         // ========================================================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js').then(function(registration) {
+                navigator.serviceWorker.register('sw.js?v=2').then(function(registration) {
                     console.log('PWA ServiceWorker đăng ký thành công');
                 }).catch(function(err) {
                     console.log('Lỗi đăng ký ServiceWorker: ', err);

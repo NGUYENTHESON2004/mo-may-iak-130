@@ -37,13 +37,6 @@
     user-select: none;
   }
 
-  /* Khung chứa tự động căn giữa */
-  #animation_container {
-    position: absolute; 
-    margin: auto; 
-    left: 0; right: 0; top: 0; bottom: 0;
-    background-color: #000000;
-  }
   html, body {
     margin: 0;
     padding: 0;
@@ -226,7 +219,7 @@ function playSound(id, loop, offset) {
     </div>
 
     <!-- Khung chứa giao diện phần mềm (Nền đen đồng bộ) -->
-    <div id="animation_container" style="background-color:rgba(0, 0, 0, 1.00); width:1420px; height:720px">
+    <div id="animation_container" style="background-color:rgba(255, 255, 255, 1.00);; width:1420px; height:720px">
         <canvas id="canvas" width="1420" height="720" style="position: absolute; display: block; background-color:rgba(0, 0, 0, 1.00);"></canvas>
         <div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:1420px; height:720px; position: absolute; left: 0px; top: 0px; display: block;">
         </div>

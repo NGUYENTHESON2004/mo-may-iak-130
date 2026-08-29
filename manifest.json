@@ -1,7 +1,7 @@
 {
-  "name": "Hệ Thống Huấn Luyện Kỹ Thuật Hàng Không",
+  "name": "Mô phỏng mở máy Iak-130",
   "short_name": "Iak-130",
-  "description": "Phần mềm mô phỏng và thực hành kỹ thuật",
+  "description": "Phần mềm mô phỏng quy trình mở máy, kiểm tra tham số trên máy bay Iak-130",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1a2226",
